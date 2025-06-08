@@ -3,9 +3,9 @@ import Image from 'next/image';
 const Navbar = () => {
   return (
     <>
-      <div className='flex justify-between items-center bg-[var(--color-primary)] px-8 h-[60px]'>
+      <div className='flex justify-between items-center bg-blue-950 text-white px-8 h-[60px]'>
         <div className='flex items-center'>
-          <Image src="/assets/logo.png" alt="Logo" width={120} height={60} className='h-[80px]' />
+          <Image src="/assets/logo.png" alt="Logo" width={154} height={20} />
         </div>
         <nav>
           <ul className='flex gap-6 list-none m-0 p-0'>
