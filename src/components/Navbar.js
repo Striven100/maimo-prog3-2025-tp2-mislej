@@ -1,22 +1,18 @@
-import Image from 'next/image';
+import Image from 'next/image'
 
-const Navbar = () => {
+export default function Navbar() {
   return (
-    <>
-      <div className='flex justify-between items-center bg-blue-950 text-white px-8 h-[60px]'>
-        <div className='flex items-center'>
-          <Image src="/assets/logo.png" alt="Logo" width={154} height={20} />
-        </div>
+    <header className="sticky top-0 bg-blue-900 text-white shadow-md">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <Image src="/assets/logo.png" alt="Logo" width={154} height={20} />
         <nav>
-          <ul className='flex gap-6 list-none m-0 p-0'>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
+          <ul className="flex space-x-8 text-sm font-medium">
+            <li><a href="#" className="hover:text-gray-300">Home</a></li>
+            <li><a href="#" className="hover:text-gray-300">About</a></li>
+            <li><a href="#" className="hover:text-gray-300">Contact</a></li>
           </ul>
         </nav>
       </div>
-    </>
-  );
-};
-
-export default Navbar;
+    </header>
+  )
+}

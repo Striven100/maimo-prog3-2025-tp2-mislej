@@ -1,9 +1,25 @@
-import React from 'react'
+import Image from 'next/image'
 
-const MoviesGrid = ({movies}) => {
+const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500'
+
+export default function MoviesGrid({ movies }) {
   return (
-    <div>MoviesGrid</div>
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      {movies.map(movie => (
+        <div key={movie.id} className="bg-gray-800 rounded-lg overflow-hidden shadow-md">
+          <Image
+            src={`${IMAGE_BASE}${movie.poster_path}`}
+            alt={movie.title}
+            width={500}
+            height={750}
+            className="object-cover w-full h-72"
+          />
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-white truncate">{movie.title}</h3>
+            <p className="text-sm text-gray-400">{movie.release_date}</p>
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
-
-export default MoviesGrid
