@@ -15,7 +15,7 @@ export default function Hero({ movies }) {
         <h1 className="text-6xl font-bold mb-4">{featureMovie.title}</h1>
         <p className="text-lg max-w-2xl mb-6">{featureMovie.overview}</p>
       </div>
-      <div className="relative z-20 mt-4 overflow-x-auto px-6 pb-6">
+      <div className="absolute z-20 inset-x-0 bottom-6 overflow-x-auto px-6 pb-6">
         <div className="flex space-x-4">
           {sorted.slice(0, 20).map(movie => (
             <div key={movie.id} onMouseEnter={() => setFeatureMovie(movie)} className="flex-shrink-0 w-40 cursor-pointer group">
