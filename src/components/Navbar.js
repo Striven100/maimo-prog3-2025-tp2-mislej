@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 bg-blue-900 text-white shadow-md">
+    <header className="sticky top-0 bg-gray-900 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <Image src="/assets/logo.png" alt="Logo" width={154} height={20} />
         <nav>
