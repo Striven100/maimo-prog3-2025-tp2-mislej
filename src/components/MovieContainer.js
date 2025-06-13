@@ -33,9 +33,9 @@ export default function MovieContainer({ id }) {
   const IMAGE_BASE = 'https://image.tmdb.org/t/p/original'
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900 text-white">
-    {!loading &&
     <div>
+    {!loading &&
+    <div className="min-h-screen flex flex-col bg-gray-900 text-white">
       <div className="relative w-full h-96 overflow-hidden">
         <Image
           src={`${IMAGE_BASE}${movie.backdrop_path}`}
@@ -44,10 +44,26 @@ export default function MovieContainer({ id }) {
           className="object-cover"
         />
       </div>
-      <div className="max-w-4xl mx-auto px-6 py-12 space-y-6">
+      <div className="md:w-1/3 mt-15 flex-shrink-0 ml-20">
+    <Image
+      src={`${IMAGE_BASE}${movie.poster_path}`}
+      alt={`${movie.title} poster`}
+      width={300}
+      height={450}
+      className="rounded-lg object-cover"
+    />
+  </div>
+      <div className="md:flex-1 space-y-6 ml-20 mt-15 mb-10">
         <h1 className="text-4xl font-bold truncate">{movie.title}</h1>
         <p className="text-gray-300">{movie.tagline}</p>
         <p className="text-lg leading-relaxed">{movie.overview}</p>
+        <div className="flex flex-wrap gap-4">
+          <span className="px-3 py-1 bg-blue-600 rounded-full text-sm">{movie.release_date}</span>
+          <span className="px-3 py-1 bg-green-600 rounded-full text-sm">⭐ {movie.vote_average}</span>
+          {movie.genres.map(g => (
+            <span key={g.id} className="px-3 py-1 bg-gray-700 rounded-full text-sm">{g.name}</span>
+          ))}
+        </div>
         <Link href="/" className="inline-block mt-8 px-6 py-2 bg-yellow-500 rounded-lg font-medium text-black hover:bg-yellow-600">
           Volver al inicio
         </Link>
