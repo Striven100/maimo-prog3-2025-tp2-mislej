@@ -1,4 +1,4 @@
-import MovieContainer from "/components/MovieContainer"
+import MovieContainer from "@/components/MovieContainer"
 
 const Movie = async ({params}) => {
     const {id} = await params

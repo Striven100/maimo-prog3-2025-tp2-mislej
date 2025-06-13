@@ -4,7 +4,7 @@ import Hero from './Hero'
 import MoviesGrid from './MoviesGrid'
 import axios from 'axios'
 
-export default function HomeContainer() {
+export default function HomeContainer( id ) {
   const API_URL = 'https://api.themoviedb.org/3/trending/movie/day?api_key=8d155a452063365b70d7e38e2609b662'
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(true)
@@ -28,7 +28,7 @@ export default function HomeContainer() {
       <Hero movies={movies} />
       <section className="max-w-7xl mx-auto px-6 py-12">
         <h2 className="text-2xl font-bold mb-6">Películas Tendencia</h2>
-        <MoviesGrid movies={movies} />
+        <MoviesGrid movies={movies} id={id} />
       </section>
     </main>
   )

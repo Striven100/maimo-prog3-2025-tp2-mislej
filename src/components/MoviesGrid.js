@@ -18,7 +18,7 @@ export default function MoviesGrid({ movies, id }) {
           <div className="p-4">
             <h3 className="text-lg font-semibold text-white truncate">{movie.title}</h3>
             <p className="text-sm text-gray-400">{movie.release_date}</p>
-            <Link href={`movie/${id}`} className="inline-block mt-6 px-6 py-2 bg-yellow-500 rounded-lg font-medium text-black hover:bg-yellow-600 transition-colors">Ver más</Link>
+            <Link href={`movie/${movie.id}`} className="inline-block mt-6 px-6 py-2 bg-yellow-500 rounded-lg font-medium text-black hover:bg-yellow-600 transition-colors">Ver más</Link>
           </div>
         </div>
       ))}
