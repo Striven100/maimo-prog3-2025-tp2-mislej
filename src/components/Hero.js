@@ -1,17 +1,17 @@
 'use client'
 import Image from 'next/image'
 import { useState } from 'react'
+import { useAppContext } from "@/contexts/AppContext";
+import MoviesGrid from './MoviesGrid';
 
 export default function Hero({ movies }) {
   const sorted = [...movies].sort((a, b) => b.popularity - a.popularity)
   const [featureMovie, setFeatureMovie] = useState(sorted[0])
-  const [favorites, setFavorites] = useState([])
   const IMAGE_BASE = 'https://image.tmdb.org/t/p/original'
+  const {favorites} = useAppContext()
 
-  const toggleFavorite = (id) => {
-    setFavorites(prev =>
-      prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
-    )
+  const handleMovieClick= (moviePosition) => {
+    setFeaturedMovie(movies[moviePosition])
   }
 
   return (
@@ -44,13 +44,6 @@ export default function Hero({ movies }) {
               />
               <p className="mt-2 flex items-center text-sm font-medium text-white truncate">
                 {movie.title}
-                <button
-                  onClick={() => toggleFavorite(movie.id)}
-                  className="ml-2 p-1 text-lg hover:text-yellow-300"
-                  aria-label="Marcar como favorito"
-                >
-                  {favorites.includes(movie.id) ? '★' : '☆'}
-                </button>
               </p>
             </div>
           ))}

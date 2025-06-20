@@ -1,30 +1,35 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Serif_Display, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { AppContextProvider } from "@/contexts/AppContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const dmSerifDisplay = DM_Serif_Display({
   subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-display",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const outfit = Outfit({
   subsets: ["latin"],
+  weight: ["200", "400", "600", "700"],
+  variable: "--font-outfit",
 });
 
 export const metadata = {
-  title: "Movies",
-  description: "tp-2-movies",
+  title: "TP 2 - Movies",
+  description: "Width love from Maimo",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${dmSerifDisplay.variable} ${outfit.variable} relative`}
       >
-        <Navbar />
-        {children}
+        <AppContextProvider>
+          <Navbar />
+          {children}
+        </AppContextProvider>
       </body>
     </html>
   );
