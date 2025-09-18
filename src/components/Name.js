@@ -2,9 +2,9 @@ import Link from "next/link";
 
 const Name = ({ name, id }) => {
   return (
-    <div className="movie_name">
+    <div className="NFT_name">
       <h3>{name}</h3>
-      <Link href={`movie/${id}`} className="ver_mas">Ver más</Link>
+      <Link href={`NFT/${id}`} className="ver_mas">Ver más</Link>
     </div>
   );
 };

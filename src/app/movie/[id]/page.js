@@ -1,12 +1,12 @@
-import MovieContainer from "@/components/MovieContainer"
+import NFTContainer from "@/components/NFTContainer"
 
-const Movie = async ({params}) => {
+const NFT = async ({params}) => {
     const {id} = await params
 
 
     return (
-    <MovieContainer id={id} />
+    <NFTContainer id={id} />
     )
 }
 
-export default Movie
+export default NFT

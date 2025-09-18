@@ -10,14 +10,14 @@ export const AppContextProvider = ({ children }) => {
     console.log(favorites);
   }, [favorites]);
 
-  const handleAddToFavorites = (title, image, id) => {
+  const handleAddToFavorites = (name, image, id) => {
     setFavorites(prev => {
 
       if (prev.some(f => f.id === id)) {
         return prev.filter(f => f.id !== id);
       }
 
-      return [...prev, { title, image, id }];
+      return [...prev, { name, image, id }];
     });
   };
 

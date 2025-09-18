@@ -20,14 +20,14 @@ const FavoritesContainer = () => {
     <section className="p-6 max-w-screen-xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Tus Favoritos</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {favorites.map((movie) => (
+        {favorites.map((NFT) => (
           <div
-            key={movie.id}
+            key={NFT.id}
             className="group relative bg-gray-800 rounded-xl overflow-hidden shadow-md transform transition duration-200 hover:shadow-lg hover:scale-105"
           >
             <Image
-              src={`${IMAGE_BASE}/${movie.image}`}
-              alt={movie.title}
+              src={`${IMAGE_BASE}/${NFT.image}`}
+              alt={NFT.name}
               width={500}
               height={750}
               className="object-cover w-full h-72"
@@ -39,10 +39,10 @@ const FavoritesContainer = () => {
           
             <div className="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <h3 className="text-white text-lg font-semibold truncate">
-                {movie.title}
+                {NFT.name}
               </h3>
               <Link
-                href={`movie/${movie.id}`}
+                href={`NFT/${NFT.id}`}
                 className="mt-2 inline-block px-3 py-1 bg-yellow-500 text-black rounded-md font-medium hover:bg-yellow-600 transition-colors"
               >
                 Ver más
