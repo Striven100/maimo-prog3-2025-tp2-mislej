@@ -5,7 +5,7 @@ import NFTsGrid from './NFTsGrid'
 import axios from 'axios'
 
 export default function HomeContainer( id ) {
-  const API_URL = 'https://api.theNFTdb.org/3/trending/NFT/day?api_key=8d155a452063365b70d7e38e2609b662'
+  const API_URL = 'http://localhost:4000/products'
   const [NFTs, setNFTs] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -13,7 +13,7 @@ export default function HomeContainer( id ) {
     async function fetchData() {
       setLoading(true)
       const response = await axios.get(API_URL)
-      setNFTs(response.data.results)
+      setNFTs(response.data.products)
       setLoading(false)
     }
     fetchData()

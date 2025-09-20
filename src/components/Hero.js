@@ -11,7 +11,7 @@ export default function Hero({ NFTs }) {
   const {favorites} = useAppContext()
 
   const handleNFTClick= (NFTPosition) => {
-    setFeaturedNFT(NFTs[NFTPosition])
+    setFeatureNFT(NFTs[NFTPosition])
   }
 
   return (
