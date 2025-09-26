@@ -1,11 +1,11 @@
 import NFTContainer from "@/components/NFTContainer"
 
 const NFT = async ({params}) => {
-    const {id} = await params
+    const {_id} = await params
 
 
     return (
-    <NFTContainer id={id} />
+    <NFTContainer _id={_id} />
     )
 }
 

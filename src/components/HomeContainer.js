@@ -4,7 +4,7 @@ import Hero from './Hero'
 import NFTsGrid from './NFTsGrid'
 import axios from 'axios'
 
-export default function HomeContainer( id ) {
+export default function HomeContainer(_id) {
   const API_URL = 'http://localhost:4000/products'
   const [NFTs, setNFTs] = useState([])
   const [loading, setLoading] = useState(true)
@@ -13,7 +13,13 @@ export default function HomeContainer( id ) {
     async function fetchData() {
       setLoading(true)
       const response = await axios.get(API_URL)
-      setNFTs(response.data.products)
+      const normalized = response.data.products.map(p => ({
+        ...p,
+        _id: p._id,                        
+        backdrop_path: p.backdrop_path,     
+        popularity: p.vote_count ?? 0      
+      }))
+      setNFTs(normalized)
       setLoading(false)
     }
     fetchData()
@@ -27,8 +33,8 @@ export default function HomeContainer( id ) {
     <main className="flex-auto">
       <Hero NFTs={NFTs} />
       <section className="max-w-7xl mx-auto px-6 py-12">
-        <h2 className="text-2xl font-bold mb-6">Películas Tendencia</h2>
-        <NFTsGrid NFTs={NFTs} id={id} />
+        <h2 className="text-2xl font-bold mb-6">NFTs</h2>
+        <NFTsGrid NFTs={NFTs} _id={_id} />
       </section>
     </main>
   )

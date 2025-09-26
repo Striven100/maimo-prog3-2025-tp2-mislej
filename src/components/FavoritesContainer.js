@@ -11,7 +11,7 @@ const FavoritesContainer = () => {
   if (favorites.length === 0) {
     return (
       <p className="text-center text-gray-400 mt-10">
-        Aún no tienes películas en favoritos.
+        Aún no tienes NFTs en favoritos.
       </p>
     );
   }
@@ -22,15 +22,15 @@ const FavoritesContainer = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {favorites.map((NFT) => (
           <div
-            key={NFT.id}
+            key={NFT._id}
             className="group relative bg-gray-800 rounded-xl overflow-hidden shadow-md transform transition duration-200 hover:shadow-lg hover:scale-105"
           >
             <Image
-              src={`${IMAGE_BASE}/${NFT.image}`}
+              src={`/assets/${NFT.backdrop_path}`}
               alt={NFT.name}
-              width={500}
-              height={750}
-              className="object-cover w-full h-72"
+              width={58}
+              height={58}
+              className="object-cover [image-rendering:pixelated]"
             />
 
             
@@ -42,7 +42,7 @@ const FavoritesContainer = () => {
                 {NFT.name}
               </h3>
               <Link
-                href={`NFT/${NFT.id}`}
+                href={`/assets/${NFT.backdrop_path}`}
                 className="mt-2 inline-block px-3 py-1 bg-yellow-500 text-black rounded-md font-medium hover:bg-yellow-600 transition-colors"
               >
                 Ver más

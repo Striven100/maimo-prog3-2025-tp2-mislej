@@ -18,7 +18,7 @@ export default function Hero({ NFTs }) {
     <section className="relative w-full h-screen bg-black">
       <div className="absolute inset-0 bg-black/50 z-10" />
       <Image
-        src={`${IMAGE_BASE}${featureNFT.backdrop_path}`}
+        src="/assets/unnamed.png"
         alt={featureNFT.name}
         fill
         className="object-cover"
@@ -29,24 +29,6 @@ export default function Hero({ NFTs }) {
       </div>
       <div className="absolute z-20 inset-x-0 bottom-6 overflow-x-auto px-6 pb-6">
         <div className="flex space-x-4">
-          {sorted.slice(0, 20).map(NFT => (
-            <div
-              key={NFT.id}
-              onMouseEnter={() => setFeatureNFT(NFT)}
-              className="flex-shrink-0 w-40 cursor-pointer group"
-            >
-              <Image
-                alt={NFT.name}
-                src={`${IMAGE_BASE}${NFT.poster_path}`}
-                width={160}
-                height={240}
-                className="rounded-lg shadow-lg group-hover:scale-105 transition-transform"
-              />
-              <p className="mt-2 flex items-center text-sm font-medium text-white truncate">
-                {NFT.name}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </section>
