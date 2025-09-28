@@ -1,12 +1,10 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-const Name = ({ name,_id }) => {
+export default function Name({ name, _id }) {
   return (
-    <div className="NFT_name">
-      <h3>{name}</h3>
-      <Link href={`NFT/${_id}`} className="ver_mas">Ver más</Link>
+    <div className="flex items-center justify-between gap-3">
+      <h3 className="font-bold text-black/90 truncate">{name}</h3>
+      <Link href={`/NFT/${_id}`} className="px-3 py-1.5 rounded-xl bg-[#6f58b7] text-white text-sm hover:bg-[#5a469c]">Ver más</Link>
     </div>
-  );
-};
-
-export default Name;
+  )
+}

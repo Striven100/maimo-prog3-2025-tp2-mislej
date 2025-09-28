@@ -1,34 +1,41 @@
 'use client'
 import Image from 'next/image'
-import { useState } from 'react'
-import { useAppContext } from "@/contexts/AppContext";
-import NFTsGrid from './NFTsGrid';
+import { useState, useMemo } from 'react'
 
 export default function Hero({ NFTs }) {
-  const sorted = [...NFTs].sort((a, b) => b.popularity - a.popularity)
-  const [featureNFT, setFeatureNFT] = useState(sorted[0])
-  const IMAGE_BASE = 'https://image.tmdb.org/t/p/original'
-  const {favorites} = useAppContext()
-
-  const handleNFTClick= (NFTPosition) => {
-    setFeatureNFT(NFTs[NFTPosition])
-  }
+  const list = useMemo(() => [...NFTs].sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0)), [NFTs])
+  const [feature, setFeature] = useState(list[0] ?? null)
 
   return (
-    <section className="relative w-full h-screen bg-black">
-      <div className="absolute inset-0 bg-black/50 z-10" />
-      <Image
-        src="/assets/unnamed.png"
-        alt={featureNFT.name}
-        fill
-        className="object-cover"
-      />
-      <div className="relative z-20 max-w-4xl mx-auto text-white py-24 px-6">
-        <h1 className="text-6xl font-bold mb-4">{featureNFT.name}</h1>
-        <p className="text-lg max-w-2xl mb-6">{featureNFT.overview}</p>
-      </div>
-      <div className="absolute z-20 inset-x-0 bottom-6 overflow-x-auto px-6 pb-6">
-        <div className="flex space-x-4">
+    <section className="relative w-full min-h-[70vh] md:min-h-[76vh] overflow-hidden">
+      <Image src="/assets/unnamed.png" alt="Header" fill className="object-cover" priority />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#c9b3ea]/90 via-[#9e85d6]/75 to-[#6f58b7]/80" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
+        <div className="max-w-3xl text-black">
+          <h1 className="text-4xl md:text-6xl font-black leading-tight drop-shadow-sm">{feature?.name ?? 'Colección Pixel Dragons'}</h1>
+          <p className="mt-4 text-base md:text-lg/7 text-black/80">{feature?.overview ?? 'Descubrí criaturas pixel art y coleccionalas en tu wallet. Arte retro, atmósfera fantástica y compras simples.'}</p>
+          <a href="#catalogo" className="mt-8 inline-block px-6 py-3 rounded-2xl bg-black text-white font-semibold hover:bg-black/90">Ver catálogo</a>
+        </div>
+
+        <div className="mt-12 md:mt-16">
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {list.slice(0, 12).map(n => (
+              <button
+                key={n._id}
+                onClick={() => setFeature(n)}
+                className={`group relative shrink-0 w-40 rounded-2xl border border-black/10 overflow-hidden bg-white/40 hover:bg-white/60`}
+              >
+                <div className="aspect-[4/3] relative">
+                  <Image src={`/assets/${n.backdrop_path}`} alt={n.name} fill className="object-cover [image-rendering:pixelated]" />
+                </div>
+                <div className="p-3 text-left">
+                  <p className="text-sm font-semibold text-black/80 truncate">{n.name}</p>
+                  <p className="text-xs text-black/60">{n.release_date}</p>
+                </div>
+                {feature?._id === n._id && <span className="absolute inset-0 ring-2 ring-[#3cc37a] rounded-2xl" />}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>

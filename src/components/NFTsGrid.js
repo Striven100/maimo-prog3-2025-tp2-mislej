@@ -1,46 +1,37 @@
+'use client'
 import Image from 'next/image'
-import Link from "next/link";
+import Link from 'next/link'
 import { useAppContext } from '@/contexts/AppContext'
 
-const IMAGE_BASE = 'https://image.tmdb.org/t/p/w500'
-
-export default function NFTsGrid({ NFTs, _id }) {
-  const { favorites, handleAddToFavorites } = useAppContext();
-
+export default function NFTsGrid({ NFTs }) {
+  const { Carrito, handleAddToCarrito } = useAppContext()
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-      {NFTs.map(NFT => {
-        const isFavorite = favorites.some(f => f._id === NFT._id);
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+      {NFTs.map(n => {
+        const inCart = Carrito.some(f => f._id === n._id)
         return (
-          <div key={NFT._id} className="bg-gray-800 rounded-lg overflow-hidden shadow-md">
-            <Image
-              src={`/assets/${NFT.backdrop_path}`}
-              alt={NFT.name}
-              width={58}
-              height={58}
-              className="object-cover [image-rendering:pixelated]"
-            />
-            <div className="p-4 flex flex-col">
-              <div className="flex justify-between items-start">
-                <h3 className="text-lg font-semibold text-white truncate">{NFT.name}</h3>
+          <article key={n._id} className="rounded-2xl overflow-hidden border border-black/10 bg-white/60 hover:bg-white shadow-sm hover:shadow-lg transition">
+            <div className="relative aspect-[4/3]">
+              <Image src={`/assets/${n.backdrop_path}`} alt={n.name} fill className="object-cover [image-rendering:pixelated]" />
+            </div>
+            <div className="p-4">
+              <div className="flex items-start gap-3">
+                <h3 className="font-bold text-black/90 truncate">{n.name}</h3>
                 <button
-                  onClick={() => handleAddToFavorites(NFT.name, NFT.backdrop_path, NFT._id)}
-                  aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-                  className={`p-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400
-                    ${isFavorite
-                      ? 'bg-yellow-500 text-black hover:bg-yellow-600 shadow-md'
-                      : 'bg-transparent text-gray-400 hover:bg-gray-700'}
-                  `}
+                  onClick={() => handleAddToCarrito(n.name, `/assets/${n.backdrop_path}`, n._id)}
+                  className={`ml-auto inline-flex items-center justify-center w-9 h-9 rounded-xl border ${inCart ? 'bg-[#3cc37a] text-black border-black/10' : 'bg-black text-white border-black'} hover:opacity-90`}
+                  aria-label={inCart ? 'Quitar del carrito' : 'Agregar al carrito'}
                 >
-                  {isFavorite ? '✅' : '🛒'}
+                  {inCart ? '✓' : '🛒'}
                 </button>
               </div>
-              <p className="text-sm text-gray-400 mt-2">{NFT.release_date}</p>
-              <Link href={`NFT/${NFT._id}`} className="mt-2 inline-block px-3 py-1 bg-yellow-500 text-black rounded-md font-medium hover:bg-yellow-600 transition-colors">
-                Ver más
-              </Link>
+              <p className="mt-1 text-xs text-black/60">{n.release_date}</p>
+              <div className="mt-4 flex items-center justify-between">
+                <Link href={`/NFT/${n._id}`} className="px-3 py-1.5 rounded-xl bg-[#6f58b7] text-white text-sm hover:bg-[#5a469c]">Ver más</Link>
+                <span className="text-xs px-2 py-1 rounded bg-[#ff5252]/10 text-[#ff5252]">★ {n.vote_average ?? 0}</span>
+              </div>
             </div>
-          </div>
+          </article>
         )
       })}
     </div>

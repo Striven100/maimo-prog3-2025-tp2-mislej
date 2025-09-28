@@ -4,14 +4,14 @@ import { useState, useEffect, useContext, createContext } from "react";
 const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
-  const [favorites, setFavorites] = useState([]);
+  const [Carrito, setCarrito] = useState([]);
 
   useEffect(() => {
-    console.log(favorites);
-  }, [favorites]);
+    console.log(Carrito);
+  }, [Carrito]);
 
-  const handleAddToFavorites = (name, image, _id) => {
-    setFavorites(prev => {
+  const handleAddToCarrito = (name, image, _id) => {
+    setCarrito(prev => {
 
       if (prev.some(f => f._id ===_id)) {
         return prev.filter(f => f._id !==_id);
@@ -21,14 +21,14 @@ export const AppContextProvider = ({ children }) => {
     });
   };
 
-  const favoritesQty = () => favorites.length;
+  const CarritoQty = () => Carrito.length;
 
   return (
     <AppContext.Provider
       value={{
-        favorites,
-        handleAddToFavorites,
-        favoritesQty,
+        Carrito,
+        handleAddToCarrito,
+        CarritoQty,
       }}
     >
       {children}
