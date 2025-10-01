@@ -53,7 +53,6 @@ export default function HomeContainer() {
       </section>
      <section id="sobre" className="bg-[#9e85d6] text-black">
   <div className="max-w-7xl mx-auto px-4 md:px-8 py-14 grid md:grid-cols-2 gap-10">
-    {/* Columna de texto */}
     <div className="space-y-4">
       <h3 className="text-2xl font-black">Sobre el Autor</h3>
       <p className="text-black/80">
@@ -63,8 +62,6 @@ export default function HomeContainer() {
         Me apasionan los juegos de rol, el arte interactivo y el desarrollo web. Esta página es una muestra de mi trabajo integrando estética retro con funcionalidad moderna.
       </p>
     </div>
-
-    {/* Columna de sprites */}
     <div className="grid grid-cols-4 gap-3 place-items-center">
       <img src="/assets/crow.png" alt="Cuervo" className="w-12 h-12 [image-rendering:pixelated]" />
       <img src="/assets/bandit.png" alt="Bandido" className="w-12 h-12 [image-rendering:pixelated]" />

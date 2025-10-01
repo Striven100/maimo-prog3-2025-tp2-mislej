@@ -54,7 +54,7 @@ export default function NFTContainer({ _id }) {
       </div>
     </div>
   )
-  if (!item) return null
+
 
   return (
     <div className="min-h-screen bg-[#e2d6ff]">
