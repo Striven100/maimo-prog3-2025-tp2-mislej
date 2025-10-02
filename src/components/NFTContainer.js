@@ -3,10 +3,10 @@ import { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useAppContext } from '@/contexts/AppContext'
+import { useShopContext } from '@/contexts/ShopContext'
 
 export default function NFTContainer({ _id }) {
-  const { Carrito, handleAddToCarrito } = useAppContext()
+  const { Carrito, handleAddToCarrito } = useShopContext()
   const [item, setItem] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)

@@ -1,6 +1,9 @@
 import NFTContainer from "@/components/NFTContainer"
+import React from "react"
 
-export default function NFTPage({ params }) {
-  const { _id } = params
-  return <NFTContainer _id={_id} />
+const NFTPage = async ({ params }) => {
+  const { _id } = await params
+  return <NFTContainer _id = {_id} />
 }
+
+export default NFTPage

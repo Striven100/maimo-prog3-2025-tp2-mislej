@@ -1,7 +1,7 @@
 import { DM_Serif_Display, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import { AppContextProvider } from "@/contexts/AppContext";
+import { ShopContextProvider } from "@/contexts/ShopContext";
 
 const dmSerifDisplay = DM_Serif_Display({
   subsets: ["latin"],
@@ -26,10 +26,10 @@ export default function RootLayout({ children }) {
       <body
         className={`${dmSerifDisplay.variable} ${outfit.variable} relative`}
       >
-        <AppContextProvider>
+        <ShopContextProvider>
           <Navbar />
           {children}
-        </AppContextProvider>
+        </ShopContextProvider>
       </body>
     </html>
   );

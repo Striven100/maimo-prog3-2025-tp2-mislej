@@ -1,10 +1,10 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useAppContext } from '@/contexts/AppContext'
+import { useShopContext } from '@/contexts/ShopContext'
 
 export default function NFTsGrid({ NFTs }) {
-  const { Carrito, handleAddToCarrito } = useAppContext()
+  const { Carrito, handleAddToCarrito } = useShopContext()
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
       {NFTs.map(n => {

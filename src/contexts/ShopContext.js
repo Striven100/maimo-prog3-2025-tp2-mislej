@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useContext, createContext } from "react";
-const AppContext = createContext();
+const ShopContext = createContext();
 
-export const AppContextProvider = ({ children }) => {
+export const ShopContextProvider = ({ children }) => {
   const [Carrito, setCarrito] = useState([]);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const AppContextProvider = ({ children }) => {
   const CarritoQty = () => Carrito.length;
 
   return (
-    <AppContext.Provider
+    <ShopContext.Provider
       value={{
         Carrito,
         handleAddToCarrito,
@@ -32,16 +32,16 @@ export const AppContextProvider = ({ children }) => {
       }}
     >
       {children}
-    </AppContext.Provider>
+    </ShopContext.Provider>
   );
 };
 
-export const useAppContext = () => {
-  const context = useContext(AppContext);
+export const useShopContext = () => {
+  const context = useContext(ShopContext);
   if (!context) {
-    throw new Error("useAppContext must be used within a AppContextProvider");
+    throw new Error("useShopContext must be used within a ShopContextProvider");
   }
   return context;
 };
 
-export default AppContext;
+export default ShopContext;

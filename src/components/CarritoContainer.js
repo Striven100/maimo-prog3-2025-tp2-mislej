@@ -1,11 +1,11 @@
 'use client'
 
-import { useAppContext } from '@/contexts/AppContext'
+import { useShopContext } from '@/contexts/ShopContext'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function CarritoContainer() {
-  const { Carrito } = useAppContext()
+  const { Carrito } = useShopContext()
 
   if (!Carrito.length) {
     return (
@@ -26,7 +26,7 @@ export default function CarritoContainer() {
           {Carrito.map(n => (
             <article key={n._id} className="rounded-2xl overflow-hidden border border-black/10 bg-white/70">
               <div className="relative aspect-[4/3]">
-                <Image src={n.backdrop_path.startsWith('/assets/') ? n.backdrop_path : `/assets/${n.backdrop_path}`} alt={n.name} fill className="object-cover [image-rendering:pixelated]" />
+                <Image src={`/assets/${n.backdrop_path}`} alt={n.name} fill className="object-cover [image-rendering:pixelated]" />
               </div>
               <div className="p-4">
                 <h3 className="font-bold text-black/90 truncate">{n.name}</h3>
