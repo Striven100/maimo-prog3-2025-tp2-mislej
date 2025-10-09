@@ -1,7 +1,7 @@
 import { DM_Serif_Display, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import { ShopContextProvider } from "@/contexts/ShopContext";
+import { ShopProvider } from "@/contexts/ShopContext";
 
 const dmSerifDisplay = DM_Serif_Display({
   subsets: ["latin"],
@@ -16,20 +16,18 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  name: "TP 2 - NFTs",
-  description: "Width love from Maimo",
+  title: "TP 2 - NFTs",
+  description: "With love from Maimo",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${dmSerifDisplay.variable} ${outfit.variable} relative`}
-      >
-        <ShopContextProvider>
+    <html lang="es">
+      <body className={`${dmSerifDisplay.variable} ${outfit.variable} relative`}>
+        <ShopProvider>
           <Navbar />
           {children}
-        </ShopContextProvider>
+        </ShopProvider>
       </body>
     </html>
   );

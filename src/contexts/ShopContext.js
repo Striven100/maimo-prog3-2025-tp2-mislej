@@ -1,47 +1,73 @@
-"use client";
+'use client'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
-import { useState, useEffect, useContext, createContext } from "react";
-const ShopContext = createContext();
+const ShopContext = createContext(null)
 
-export const ShopContextProvider = ({ children }) => {
-  const [Carrito, setCarrito] = useState([]);
+export function ShopProvider({ children }) {
+  const [Carrito, setCarrito] = useState([])
 
   useEffect(() => {
-    console.log(Carrito);
-  }, [Carrito]);
+    try {
+      const raw = localStorage.getItem('carrito')
+      if (raw) setCarrito(JSON.parse(raw))
+    } catch {}
+  }, [])
+  useEffect(() => {
+    try {
+      localStorage.setItem('carrito', JSON.stringify(Carrito))
+    } catch {}
+  }, [Carrito])
 
-  const handleAddToCarrito = (name, image, _id) => {
-    setCarrito(prev => {
-
-      if (prev.some(f => f._id ===_id)) {
-        return prev.filter(f => f._id !==_id);
-      }
-
-      return [...prev, { name, image, _id }];
-    });
-  };
-
-  const CarritoQty = () => Carrito.length;
-
-  return (
-    <ShopContext.Provider
-      value={{
-        Carrito,
-        handleAddToCarrito,
-        CarritoQty,
-      }}
-    >
-      {children}
-    </ShopContext.Provider>
-  );
-};
-
-export const useShopContext = () => {
-  const context = useContext(ShopContext);
-  if (!context) {
-    throw new Error("useShopContext must be used within a ShopContextProvider");
+  const normalizarPath = (path) => {
+    if (!path) return ''
+    return path.startsWith('/assets/') ? path.replace('/assets/', '') : path
   }
-  return context;
-};
 
-export default ShopContext;
+  const agregarAlCarrito = (name, backdrop_path, _id) => {
+    const bp = normalizarPath(backdrop_path)
+    setCarrito(prev => {
+      const i = prev.findIndex(p => p._id === _id)
+      if (i === -1) {
+        return [...prev, { _id, name, backdrop_path: bp, cantidad: 1 }]
+      }
+      const next = [...prev]
+      next[i] = { ...next[i], cantidad: next[i].cantidad + 1 }
+      return next
+    })
+  }
+
+  const restarDelCarrito = (_id) => {
+    setCarrito(prev => {
+      const i = prev.findIndex(p => p._id === _id)
+      if (i === -1) return prev
+      const item = prev[i]
+      if ((item.cantidad ?? 1) <= 1) {
+        return prev.filter(p => p._id !== _id)
+      }
+      const next = [...prev]
+      next[i] = { ...item, cantidad: item.cantidad - 1 }
+      return next
+    })
+  }
+
+  const eliminarDelCarrito = (_id) =>
+    setCarrito(prev => prev.filter(p => p._id !== _id))
+
+  const limpiarCarrito = () => setCarrito([])
+
+  const CarritoQty = () =>
+    Carrito.reduce((acc, it) => acc + (it.cantidad ?? 1), 0)
+
+  const value = useMemo(() => ({
+    Carrito,
+    agregarAlCarrito,
+    restarDelCarrito,
+    eliminarDelCarrito,
+    limpiarCarrito,
+    CarritoQty
+  }), [Carrito])
+
+  return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>
+}
+
+export const useShopContext = () => useContext(ShopContext)
