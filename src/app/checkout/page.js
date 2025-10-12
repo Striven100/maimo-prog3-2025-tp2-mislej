@@ -1,8 +1,8 @@
 import React from 'react'
-
+import CheckoutContainer from '@/components/CheckoutContainer'
 const page = () => {
   return (
-    <CheckoutConteiner />
+    <CheckoutContainer />
   )
 }
 

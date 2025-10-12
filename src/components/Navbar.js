@@ -17,7 +17,7 @@ export default function Navbar() {
         <div className="flex items-center gap-4">
           <Link href="/" className="text-sm text-black/70 hover:text-black">Inicio</Link>
           <Link href="/carrito" className="relative text-sm text-black/70 hover:text-black">
-            Carrito
+            Checkout
             <span className="ml-2 inline-flex items-center justify-center text-[11px] font-semibold w-5 h-5 rounded-full bg-black text-white">
               {total}
             </span>
