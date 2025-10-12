@@ -22,6 +22,9 @@ export default function Navbar() {
               {total}
             </span>
           </Link>
+                <Link href="/pixelart" className="relative text-sm text-black/70 hover:text-black">
+        PixelArt
+      </Link>
         </div>
       </nav>
     </header>
