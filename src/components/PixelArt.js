@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:4000'
+
 
 export default function PixelArt() {
   const palette = useMemo(
@@ -62,9 +62,7 @@ export default function PixelArt() {
 
     try {
       setSubmitting(true)
-      const { data } = await axios.post(`${API_URL}/products`, payload, {
-        headers: { 'Content-Type': 'application/json' },
-      })
+      
       setMessage('¡Producto creado con éxito!')
       setName('')
       setDescription('')
