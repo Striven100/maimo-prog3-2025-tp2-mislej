@@ -2,9 +2,15 @@
 import Link from 'next/link'
 import { useState, useMemo } from 'react'
 import { useShopContext } from '@/contexts/ShopContext'
+import { CheckoutForm } from '@/components/FormCheckout';
 
 export default function CarritoContainer() {
-  const { Carrito, agregarAlCarrito, restarDelCarrito, eliminarDelCarrito, CarritoQty } = useShopContext()
+   const { cart, addOrder, cartTotal } = useShopContext();
+
+  const handleAddOrder = (values) => {
+    addOrder(values)
+  };
+  const { Carrito, agregarAlCarrito, CarritoQty } = useShopContext()
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -61,23 +67,13 @@ export default function CarritoContainer() {
                 <tr key={n._id} className="border-t border-black/10">
                   <td className="px-4 py-3 align-middle">
                     <div className="font-semibold text-black/90">{n.name}</div>
-                    <div className="text-xs text-black/60">ID: {n._id}</div>
+                    <div className="text-xs text-black/60">{n.release_date}</div>
                   </td>
                   <td className="px-4 py-3 align-middle">
                     <div className="inline-flex items-center gap-2">
-                      <button
-                        onClick={() => restarDelCarrito(n._id)}
-                        className="px-3 py-1.5 rounded-xl border border-black/20 bg-white hover:bg-black/5"
-                        aria-label="Restar del carrito"
-                      >–</button>
 
                       <span className="w-10 text-center font-semibold">{n.cantidad}</span>
 
-                      <button
-                        onClick={() => agregarAlCarrito(n.name, n.backdrop_path, n._id)}
-                        className="px-3 py-1.5 rounded-xl bg-black text-white hover:opacity-90"
-                        aria-label="Agregar al carrito"
-                      >+</button>
                     </div>
                   </td>
                   <td className="px-4 py-3 align-middle text-right">
@@ -88,12 +84,6 @@ export default function CarritoContainer() {
                       >
                         Ver detalle
                       </Link>
-                      <button
-                        onClick={() => eliminarDelCarrito(n._id)}
-                        className="px-3 py-1.5 rounded-xl bg-[#ff5252] text-white text-xs hover:opacity-90"
-                      >
-                        Quitar
-                      </button>
                     </div>
                   </td>
                 </tr>
@@ -102,59 +92,17 @@ export default function CarritoContainer() {
           </table>
         </div>
 
-        <form onSubmit={handleBuy} className="max-w-3xl mx-auto rounded-2xl border border-black/10 bg-white/80 p-6">
+        <div onSubmit={handleBuy} className="max-w-3xl mx-auto rounded-2xl border border-black/10 bg-white/80 p-6">
           <h3 className="mb-4 text-xl font-extrabold text-[#2b214c]">Datos para completar la compra</h3>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-[#2b214c]">Nombre</label>
-              <input
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                className="w-full rounded-xl border border-black/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#2b214c]"
-                placeholder="Ej: Ana"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-[#2b214c]">Apellido</label>
-              <input
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-                className="w-full rounded-xl border border-black/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#2b214c]"
-                placeholder="Ej: Pérez"
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-[#2b214c]">N° de tarjeta</label>
-              <input
-                value={card}
-                onChange={(e) => setCard(e.target.value)}
-                required
-                inputMode="numeric"
-                maxLength={19}
-                className="w-full rounded-xl border border-black/20 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-[#2b214c]"
-                placeholder="#### #### #### ####"
-              />
-              <p className="mt-1 text-xs text-black/60">Validación básica (no procesa el pago).</p>
-            </div>
-          </div>
+         
 
           <div className="mt-6 flex items-center justify-end gap-3">
-            <Link href="/#catalogo" className="px-4 py-2 rounded-xl border border-black/20 bg-white hover:bg-black/5">
-              Seguir comprando
-            </Link>
-            <button
-              type="submit"
-              disabled={!isValid}
-              className="px-5 py-2 rounded-xl bg-black text-white hover:opacity-90 disabled:opacity-50"
-              title={isValid ? 'Comprar' : 'Completá los campos para continuar'}
-            >
-              Comprar
-            </button>
+                    <div className='col-span-6 flex justify-center items-center'>
+          <CheckoutForm handleAddOrder={handleAddOrder} />
+        </div>
           </div>
-        </form>
+        </div>
 
         {showModal && (
           <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">

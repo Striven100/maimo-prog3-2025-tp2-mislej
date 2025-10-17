@@ -5,6 +5,7 @@ const ShopContext = createContext(null)
 
 export function ShopProvider({ children }) {
   const [Carrito, setCarrito] = useState([])
+    const [cart, setCart] = useState([]);
 
   useEffect(() => {
     try {
@@ -57,6 +58,45 @@ export function ShopProvider({ children }) {
 
   const CarritoQty = () =>
     Carrito.reduce((acc, it) => acc + (it.cantidad ?? 1), 0)
+
+    const cartTotal = cart.reduce(
+    (acc, product) => acc + product.qty * product.price,0);
+
+  const addOrder = async (userValues) => {
+    const reducedCart = cart.map((product) => {
+      const prod = {
+        name: product.name,
+        _id: product._id,
+        qty: product.qty,
+      };
+
+      return prod;
+    });
+
+    const orderValues = {
+      user: userValues,
+      products: reducedCart,
+      total: cartTotal
+    };
+    console.log('my order is', orderValues);
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/orders`,
+        orderValues
+      );
+    
+
+      return true
+
+
+
+    } catch (error) {
+      console.log('error', error);
+
+      return false
+    }
+  };
 
   const value = useMemo(() => ({
     Carrito,

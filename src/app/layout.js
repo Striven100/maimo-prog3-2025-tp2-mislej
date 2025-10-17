@@ -16,7 +16,7 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: "TP 2 - NFTs",
+  title: "TP 4 - NFTs",
   description: "With love from Maimo",
 };
 
