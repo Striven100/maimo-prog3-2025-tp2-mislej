@@ -1,55 +1,6 @@
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 
-const handleSubmit = async (e) => {
-  e.preventDefault()
-
-  // Obtener los datos del formulario
-  const firstName = e.target.firstName.value
-  const lastName = e.target.lastName.value
-  const card = e.target.card.value
-
-  // Validar campos obligatorios
-  if (!firstName || !lastName || !card) {
-    alert('Por favor completá todos los campos.')
-    return
-  }
-
-  // Armar payload con la info de compra
-  const onlyDigits = card.replace(/[^\d]/g, '')
-  const payload = {
-    buyer: {
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      cardLast4: onlyDigits.slice(-4)
-    },
-    items: Carrito.map(n => ({
-      productId: n._id,
-      name: n.name,
-      price: n.price || 'undefined',
-      quantity: n.cantidad || 1
-    })),
-    total: Carrito.reduce((acc, n) => acc + (parseFloat(n.price) || 0) * (n.cantidad || 1), 0)
-  }
-
-  try {
-    const res = await fetch('http://localhost:4000/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    if (res.ok) {
-      alert('Compra registrada correctamente 🎉')
-    } else {
-      alert('Hubo un error al registrar la compra.')
-    }
-  } catch (err) {
-    console.error(err)
-    alert('Error de conexión con la API.')
-  }
-}
-
-
 function validateEmail(value) {
   let error;
   if (!value) {
@@ -154,15 +105,11 @@ export const CheckoutForm = ({handleAddOrder}) => (
               </div>
 
               <button
-  type="submit"
-  onClick={handleSubmit}
-  className="w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
->
-  Submit
-</button>
-
-
-
+                type="submit"
+                className="w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Submit
+              </button>
             </Form>
           )}
         </Formik>

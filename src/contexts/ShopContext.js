@@ -56,6 +56,23 @@ export function ShopProvider({ children }) {
 
   const limpiarCarrito = () => setCarrito([])
 
+    const handleAddToCart = (product) => {
+    let productToAdd = {};
+    const findProduct = cart.find(
+      (productInCart) => productInCart._id === product._id
+    );
+    if (findProduct) {
+      productToAdd = { ...findProduct, qty: findProduct.qty + product.qty };
+    } else {
+      productToAdd = product;
+    }
+
+    const filteredCart = cart.filter(
+      (productInCart) => productInCart._id !== product._id
+    );
+    setCart([...filteredCart, productToAdd]);
+  };
+
   const CarritoQty = () =>
     Carrito.reduce((acc, it) => acc + (it.cantidad ?? 1), 0)
 
@@ -104,7 +121,9 @@ export function ShopProvider({ children }) {
     restarDelCarrito,
     eliminarDelCarrito,
     limpiarCarrito,
-    CarritoQty
+    handleAddToCart,
+    CarritoQty,
+    addOrder
   }), [Carrito])
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>

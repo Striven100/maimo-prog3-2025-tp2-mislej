@@ -10,7 +10,7 @@ export default function CarritoContainer() {
   const handleAddOrder = (values) => {
     addOrder(values)
   };
-  const { Carrito, agregarAlCarrito, CarritoQty } = useShopContext()
+  const { Carrito, CarritoQty } = useShopContext()
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
