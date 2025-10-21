@@ -41,13 +41,24 @@ export default function CarritoContainer() {
       return
     }
 
+    const payload = {
+  name,
+  email,
+  items: (Carrito || []).map(p => ({
+    productId: String(p._id || p.id || '').trim(),
+    name: String(p.name || '').trim(),
+    price: typeof p.price === 'number'
+      ? p.price
+      : Number(String(p.price).replace(/[^\d.]/g, '')) || 0, // "0.08 ETH" -> 0.08
+    quantity: p.cantidad || p.quantity || 1,
+  })),
+};
+await axios.post('https://maimo-prog3-2025-tp4-5-mislej.vercel.app/routes', payload);
+
+
     try {
       setSending(true)
-      const { data } = await axios.post('http://localhost:4000/routes', {
-        name,
-        email,
-        items
-      })
+      const { data } = await axios.post('https://maimo-prog3-2025-tp4-5-mislej.vercel.app/routes',{ name, email, items });
 
       if (data?.ok) {
         setMsg('¡Pedido enviado con éxito!')
