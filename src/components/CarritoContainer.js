@@ -12,113 +12,84 @@ export default function CarritoContainer() {
   const [error, setError] = useState(null)
 
   const items = useMemo(() => {
-    return (Carrito || []).map(p => ({
-      productId: p._id,
-      name: p.name,
-      price: typeof p.price === 'number'
-        ? p.price
-        : Number(String(p.price).replace(/[^\d.]/g, '')) || 0,
-      quantity: p.cantidad || p.quantity || 1,
-    }))
+    return (Carrito || []).map(p => {
+      const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[^\d.]/g, '')) || 0
+      const qtyNum = p.qty > 0 ? p.qty : 1
+      return {
+        _id: p._id,
+        productId: p._id,
+        name: p.name,
+        price: priceNum,
+        qty: qtyNum,
+        quantity: qtyNum
+      }
+    })
   }, [Carrito])
 
   const total = useMemo(() => {
-    return items.reduce((acc, it) => acc + it.price * it.quantity, 0)
+    return items.reduce((acc, it) => acc + it.price * (it.qty ?? it.quantity ?? 1), 0)
   }, [items])
 
-  const handleSubmit = async (e) => {
+  async function onSubmit(e) {
     e.preventDefault()
-    setError(null)
     setMsg(null)
-
-    if (!name.trim() || !email.trim()) {
-      setError('Completá nombre y mail.')
+    setError(null)
+    if (!name || !email) {
+      setError('Completa nombre y email')
       return
     }
-
     if (items.length === 0) {
-      setError('Tu carrito está vacío.')
+      setError('El carrito está vacío')
       return
     }
-
-    const payload = {
-  name,
-  email,
-  items: (Carrito || []).map(p => ({
-    productId: String(p._id || p.id || '').trim(),
-    name: String(p.name || '').trim(),
-    price: typeof p.price === 'number'
-      ? p.price
-      : Number(String(p.price).replace(/[^\d.]/g, '')) || 0, // "0.08 ETH" -> 0.08
-    quantity: p.cantidad || p.quantity || 1,
-  })),
-};
-await axios.post('https://maimo-prog3-2025-tp4-5-mislej.vercel.app/routes', payload);
-
-
     try {
       setSending(true)
-      const { data } = await axios.post('https://maimo-prog3-2025-tp4-5-mislej.vercel.app/routes',{ name, email, items });
-
+      const API = process.env.NEXT_PUBLIC_API_BASE || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+      const { data } = await axios.post(`${API}/routes`, { name, email, items, total })
       if (data?.ok) {
         setMsg('¡Pedido enviado con éxito!')
       } else {
-        setError('Error al enviar el pedido.')
+        setError('Error al enviar el pedido')
       }
-    } catch (err) {
-      console.error(err)
-      setError('No se pudo conectar con la API.')
+    } catch {
+      setError('No se pudo conectar con la API')
     } finally {
       setSending(false)
     }
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-4">Carrito</h1>
-
-      <div className="rounded-lg border p-4 mb-6 bg-white/80">
-        {items.length === 0 ? (
-          <p>No hay productos en el carrito.</p>
-        ) : (
-          <ul className="space-y-2">
-            {items.map((it, idx) => (
-              <li key={idx} className="flex justify-between">
-                <span>{it.name} × {it.quantity}</span>
-                <span>${(it.price * it.quantity).toFixed(2)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="border-t mt-3 pt-3 flex justify-between font-medium">
-          <span>Total</span>
-          <span>${total.toFixed(2)}</span>
+    <div className="max-w-md mx-auto p-4 space-y-4">
+      <h2 className="text-xl font-semibold">Checkout</h2>
+      <form onSubmit={onSubmit} className="space-y-3">
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          className="w-full rounded border px-3 py-2"
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          className="w-full rounded border px-3 py-2"
+        />
+        <div className="rounded border p-3 space-y-2">
+          {(Carrito || []).map(p => (
+            <div key={p._id} className="flex items-center justify-between text-sm">
+              <span>{p.name} × {p.qty}</span>
+              <span>
+                {(typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[^\d.]/g, '')) || 0).toFixed(2)}
+              </span>
+            </div>
+          ))}
+          <div className="flex items-center justify-between font-medium">
+            <span>Total</span>
+            <span>{total.toFixed(2)}</span>
+          </div>
         </div>
-      </div>
-
-      <form onSubmit={handleSubmit} className="rounded-lg border p-4 bg-white/90 space-y-4">
-        <div>
-          <label className="block text-sm mb-1">Nombre</label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Tu nombre"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm mb-1">Mail</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            placeholder="tu@email.com"
-          />
-        </div>
-
         <button
           type="submit"
           disabled={sending}
@@ -126,7 +97,6 @@ await axios.post('https://maimo-prog3-2025-tp4-5-mislej.vercel.app/routes', payl
         >
           {sending ? 'Enviando…' : 'Confirmar compra'}
         </button>
-
         {msg && <p className="text-green-600">{msg}</p>}
         {error && <p className="text-red-600">{error}</p>}
       </form>
