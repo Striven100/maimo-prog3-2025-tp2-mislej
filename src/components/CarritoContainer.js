@@ -1,129 +1,124 @@
 'use client'
-import Link from 'next/link'
 import { useState, useMemo } from 'react'
+import axios from 'axios'
 import { useShopContext } from '@/contexts/ShopContext'
-import { CheckoutForm } from '@/components/FormCheckout';
 
 export default function CarritoContainer() {
-   const { cart, addOrder, cartTotal } = useShopContext();
+  const { Carrito } = useShopContext()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [sending, setSending] = useState(false)
+  const [msg, setMsg] = useState(null)
+  const [error, setError] = useState(null)
 
-  const handleAddOrder = (values) => {
-    addOrder(values)
-  };
-  const { Carrito, CarritoQty } = useShopContext()
+  const items = useMemo(() => {
+    return (Carrito || []).map(p => ({
+      productId: p._id,
+      name: p.name,
+      price: typeof p.price === 'number'
+        ? p.price
+        : Number(String(p.price).replace(/[^\d.]/g, '')) || 0,
+      quantity: p.cantidad || p.quantity || 1,
+    }))
+  }, [Carrito])
 
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [card, setCard] = useState('')
-  const [showModal, setShowModal] = useState(false)
+  const total = useMemo(() => {
+    return items.reduce((acc, it) => acc + it.price * it.quantity, 0)
+  }, [items])
 
-  const hasItems = Carrito?.length > 0
-  const isValid =
-    hasItems &&
-    firstName.trim().length > 0 &&
-    lastName.trim().length > 0 &&
-    /^[\d\s-]{12,19}$/.test(card.trim())
-
-  const handleBuy = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!isValid) return
-    setShowModal(true)
-  }
+    setError(null)
+    setMsg(null)
 
-  if (!hasItems) {
-    return (
-      <section className="min-h-[50vh] grid place-items-center bg-[#e2d6ff]">
-        <div className="text-center">
-          <p className="text-black/70">Aún no tienes NFTs en tu Carrito.</p>
-          <Link href="/#catalogo" className="mt-4 inline-block px-4 py-2 rounded-xl bg-black text-white">
-            Explorar catálogo
-          </Link>
-        </div>
-      </section>
-    )
-  }
+    if (!name.trim() || !email.trim()) {
+      setError('Completá nombre y mail.')
+      return
+    }
 
-  const totalUnidades = useMemo(() => CarritoQty(), [Carrito, CarritoQty])
+    if (items.length === 0) {
+      setError('Tu carrito está vacío.')
+      return
+    }
+
+    try {
+      setSending(true)
+      const { data } = await axios.post('http://localhost:4000/routes', {
+        name,
+        email,
+        items
+      })
+
+      if (data?.ok) {
+        setMsg('¡Pedido enviado con éxito!')
+      } else {
+        setError('Error al enviar el pedido.')
+      }
+    } catch (err) {
+      console.error(err)
+      setError('No se pudo conectar con la API.')
+    } finally {
+      setSending(false)
+    }
+  }
 
   return (
-    <section className="bg-[#e2d6ff] py-12">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="flex items-end justify-between mb-8">
-          <h2 className="text-3xl font-black text-[#2b214c]">Tu Carrito</h2>
-          <span className="text-sm text-black/70">Total de unidades: {totalUnidades}</span>
-        </div>
+    <div className="max-w-3xl mx-auto p-6">
+      <h1 className="text-2xl font-semibold mb-4">Carrito</h1>
 
-        <div className="mb-8 overflow-x-auto rounded-2xl border border-black/10 bg-white/80">
-          <table className="w-full text-sm">
-            <thead className="bg-[#f1ecff] text-left text-xs uppercase text-[#2b214c]/80">
-              <tr>
-                <th className="px-4 py-3">Producto</th>
-                <th className="px-4 py-3">Cantidad</th>
-                <th className="px-4 py-3 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Carrito.map(n => (
-                <tr key={n._id} className="border-t border-black/10">
-                  <td className="px-4 py-3 align-middle">
-                    <div className="font-semibold text-black/90">{n.name}</div>
-                    <div className="text-xs text-black/60">{n.release_date}</div>
-                  </td>
-                  <td className="px-4 py-3 align-middle">
-                    <div className="inline-flex items-center gap-2">
-
-                      <span className="w-10 text-center font-semibold">{n.cantidad}</span>
-
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 align-middle text-right">
-                    <div className="flex items-center justify-end gap-3">
-                      <Link
-                        href={`/NFT/${n._id}`}
-                        className="px-3 py-1.5 rounded-xl bg-[#6f58b7] text-white text-xs hover:bg-[#5a469c]"
-                      >
-                        Ver detalle
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div onSubmit={handleBuy} className="max-w-3xl mx-auto rounded-2xl border border-black/10 bg-white/80 p-6">
-          <h3 className="mb-4 text-xl font-extrabold text-[#2b214c]">Datos para completar la compra</h3>
-
-         
-
-          <div className="mt-6 flex items-center justify-end gap-3">
-                    <div className='col-span-6 flex justify-center items-center'>
-          <CheckoutForm handleAddOrder={handleAddOrder} />
-        </div>
-          </div>
-        </div>
-
-        {showModal && (
-          <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-              <div className="mb-3 flex items-center justify-between">
-                <h4 className="text-lg font-semibold text-[#2b214c]">Compra realizada</h4>
-                <button onClick={() => setShowModal(false)} className="rounded-md p-1 text-black/60 hover:bg-black/5">✕</button>
-              </div>
-              <p className="text-black/80">¡Gracias! Tu compra se realizó con éxito</p>
-              <div className="mt-4 text-right">
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl bg-black text-white hover:opacity-90"
-                >
-                  Aceptar
-                </button>
-              </div>
-            </div>
-          </div>
+      <div className="rounded-lg border p-4 mb-6 bg-white/80">
+        {items.length === 0 ? (
+          <p>No hay productos en el carrito.</p>
+        ) : (
+          <ul className="space-y-2">
+            {items.map((it, idx) => (
+              <li key={idx} className="flex justify-between">
+                <span>{it.name} × {it.quantity}</span>
+                <span>${(it.price * it.quantity).toFixed(2)}</span>
+              </li>
+            ))}
+          </ul>
         )}
+        <div className="border-t mt-3 pt-3 flex justify-between font-medium">
+          <span>Total</span>
+          <span>${total.toFixed(2)}</span>
+        </div>
       </div>
-    </section>
+
+      <form onSubmit={handleSubmit} className="rounded-lg border p-4 bg-white/90 space-y-4">
+        <div>
+          <label className="block text-sm mb-1">Nombre</label>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            className="w-full border rounded px-3 py-2"
+            placeholder="Tu nombre"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm mb-1">Mail</label>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="w-full border rounded px-3 py-2"
+            placeholder="tu@email.com"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={sending}
+          className="px-4 py-2 rounded bg-black text-white w-full disabled:opacity-50"
+        >
+          {sending ? 'Enviando…' : 'Confirmar compra'}
+        </button>
+
+        {msg && <p className="text-green-600">{msg}</p>}
+        {error && <p className="text-red-600">{error}</p>}
+      </form>
+    </div>
   )
 }
