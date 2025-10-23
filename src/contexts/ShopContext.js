@@ -99,7 +99,7 @@ export function ShopProvider({ children }) {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/orders`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/orders`,
         orderValues
       );
     
