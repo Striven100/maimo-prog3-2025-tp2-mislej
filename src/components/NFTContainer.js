@@ -5,6 +5,29 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useShopContext } from '@/contexts/ShopContext'
 
+function Grid10({ cells }) {
+  const items = []
+  let i = 0
+  while (i < 100) {
+    const color = cells && cells[i] ? cells[i] : ''
+    items.push(
+      <div
+        key={i}
+        className="w-full h-full border border-black/10"
+        style={{ backgroundColor: color || 'transparent' }}
+      />
+    )
+    i = i + 1
+  }
+  return (
+    <div className="absolute inset-0 p-2 flex items-center justify-center">
+      <div className="grid grid-cols-10 grid-rows-10 w-full h-full bg-white">
+        {items}
+      </div>
+    </div>
+  )
+}
+
 export default function NFTContainer({ _id }) {
   const { Carrito, agregarAlCarrito, restarDelCarrito } = useShopContext()
   const [loading, setLoading] = useState(true)
@@ -19,7 +42,6 @@ export default function NFTContainer({ _id }) {
         setError(null)
         const { data } = await axios.get(`http://localhost:4000/products/${_id}`)
         if (mounted) setProduct(data.product)
-        console.log(data)
       } catch {
         if (mounted) setError('Hubo un error al cargar el NFT.')
       } finally {
@@ -73,7 +95,7 @@ export default function NFTContainer({ _id }) {
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#F4F0FF] via-[#EDE8FF] to-[#e2d6ff]">
       <div className="relative h-[32vh] md:h-[42vh]">
         <div className="absolute inset-0 overflow-hidden">
-          {product?.backdrop_path && (
+          {product && product.backdrop_path ? (
             <Image
               src={`/assets/${product.backdrop_path}`}
               alt={product.name || 'NFT'}
@@ -81,6 +103,8 @@ export default function NFTContainer({ _id }) {
               priority
               className="object-cover blur-xl scale-110 opacity-30"
             />
+          ) : (
+            <Grid10 cells={product && product.pixelData} />
           )}
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#e2d6ff]/40 to-[#e2d6ff]" />
@@ -91,36 +115,38 @@ export default function NFTContainer({ _id }) {
           <aside className="md:col-span-1">
             <div className="rounded-3xl bg-white/70 backdrop-blur-lg border border-black/10 shadow-xl overflow-hidden">
               <div className="relative aspect-[4/3]">
-                {product?.backdrop_path && (
+                {product && product.backdrop_path ? (
                   <Image
                     src={`/assets/${product.backdrop_path}`}
                     alt={product.name || 'NFT'}
                     fill
                     className="object-cover [image-rendering:pixelated]"
                   />
+                ) : (
+                  <Grid10 cells={product && product.pixelData} />
                 )}
               </div>
 
               <div className="p-5">
                 <div className="flex flex-wrap items-center gap-2 mb-4">
-                  {product?.release_date && (
+                  {product && product.release_date && (
                     <span className="px-3 py-1 rounded-full bg-black text-white text-[11px] tracking-wide">
                       🗓 {product.release_date}
                     </span>
                   )}
-                  {typeof product?.vote_average !== 'undefined' && (
+                  {product && typeof product.vote_average !== 'undefined' && (
                     <span className="px-3 py-1 rounded-full bg-[#ff5252]/10 text-[#ff5252] text-[11px] tracking-wide">
                       ★ {product.vote_average}
                     </span>
                   )}
-                  {typeof product?.vote_count !== 'undefined' && (
+                  {product && typeof product.vote_count !== 'undefined' && (
                     <span className="px-3 py-1 rounded-full bg-[#2b214c]/10 text-[#2b214c] text-[11px] tracking-wide">
                       {product.vote_count} votos
                     </span>
                   )}
-                  {product?.price && (
+                  {product && product.price && (
                     <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 text-[11px] tracking-wide">
-                      {"$" + product.price}
+                      {product.price}
                     </span>
                   )}
                 </div>
@@ -168,12 +194,12 @@ export default function NFTContainer({ _id }) {
           <main className="md:col-span-2">
             <div className="rounded-3xl bg-white/70 backdrop-blur-lg border border-black/10 shadow-xl p-6 md:p-10">
               <h1 className="text-3xl md:text-5xl font-black tracking-tight text-[#2b214c]">
-                {product.name}
+                {product && product.name}
               </h1>
             </div>
             <div className="rounded-3xl bg-white/70 backdrop-blur-lg border border-black/10 shadow-xl p-6 md:p-10">
               <h2 className="text-2xl md:text-3xl font-black tracking-tight text-[#2b214c]">
-                {"$" + product.price}
+                {product && product.price}
               </h2>
             </div>
           </main>

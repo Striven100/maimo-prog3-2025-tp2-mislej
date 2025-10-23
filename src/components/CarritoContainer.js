@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { useShopContext } from '@/contexts/ShopContext'
 
@@ -11,29 +11,24 @@ export default function CarritoContainer() {
   const [msg, setMsg] = useState(null)
   const [error, setError] = useState(null)
 
-  const items = useMemo(() => {
-    return (Carrito || []).map(p => {
-      const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[^\d.]/g, '')) || 0
-      const qtyNum = p.qty > 0 ? p.qty : 1
-      return {
-        _id: p._id,
-        productId: p._id,
-        name: p.name,
-        price: priceNum,
-        qty: qtyNum,
-        quantity: qtyNum
-      }
-    })
-  }, [Carrito])
-
-  const total = useMemo(() => {
-    return items.reduce((acc, it) => acc + it.price * (it.qty ?? it.quantity ?? 1), 0)
-  }, [items])
+  const items = (Carrito || []).map(p => {
+    const price = typeof p.price === 'string' ? p.price : p.price
+    const qty = typeof p.cantidad === 'number' ? p.cantidad : p.qty
+    return {
+      _id: p._id,
+      productId: p._id,
+      name: p.name,
+      price: price,
+      qty: qty,
+      quantity: qty
+    }
+  })
 
   async function onSubmit(e) {
     e.preventDefault()
     setMsg(null)
     setError(null)
+
     if (!name || !email) {
       setError('Completa nombre y email')
       return
@@ -42,16 +37,17 @@ export default function CarritoContainer() {
       setError('El carrito está vacío')
       return
     }
+
     try {
       setSending(true)
-      const API = process.env.NEXT_PUBLIC_API_BASE || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-      const { data } = await axios.post(`${API}/routes`, { name, email, items, total })
-      if (data?.ok) {
+      const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+      const { data } = await axios.post(`${API}/routes`, { name, email, items })
+      if (data && data.ok) {
         setMsg('¡Pedido enviado con éxito!')
       } else {
         setError('Error al enviar el pedido')
       }
-    } catch {
+    } catch (err) {
       setError('No se pudo conectar con la API')
     } finally {
       setSending(false)
@@ -61,6 +57,7 @@ export default function CarritoContainer() {
   return (
     <div className="max-w-md mx-auto p-4 space-y-4">
       <h2 className="text-xl font-semibold">Checkout</h2>
+
       <form onSubmit={onSubmit} className="space-y-3">
         <input
           type="text"
@@ -76,20 +73,20 @@ export default function CarritoContainer() {
           onChange={e => setEmail(e.target.value)}
           className="w-full rounded border px-3 py-2"
         />
+
         <div className="rounded border p-3 space-y-2">
-          {(Carrito || []).map(p => (
-            <div key={p._id} className="flex items-center justify-between text-sm">
-              <span>{p.name} × {p.qty}</span>
-              <span>
-                {(typeof p.price === 'number' ? p.price : parseFloat(String(p.price).replace(/[^\d.]/g, '')) || 0).toFixed(2)}
-              </span>
-            </div>
-          ))}
-          <div className="flex items-center justify-between font-medium">
-            <span>Total</span>
-            <span>{total.toFixed(2)}</span>
-          </div>
+          {(Carrito || []).map(p => {
+            const qty = typeof p.cantidad === 'number' ? p.cantidad : p.qty
+            const price = typeof p.price
+            return (
+              <div key={p._id} className="flex items-center justify-between text-sm">
+                <span>{p.name} × {qty}</span>
+                <span>{price}</span>
+              </div>
+            )
+          })}
         </div>
+
         <button
           type="submit"
           disabled={sending}
@@ -97,6 +94,7 @@ export default function CarritoContainer() {
         >
           {sending ? 'Enviando…' : 'Confirmar compra'}
         </button>
+
         {msg && <p className="text-green-600">{msg}</p>}
         {error && <p className="text-red-600">{error}</p>}
       </form>

@@ -1,17 +1,23 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:4000'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
 
 export default function PixelArt() {
-  const palette = useMemo(
-    () => ['#000000', '#FF0000', '#00AAFF', '#00C853', '#FFEB3B', '#9C27B0', '#FF9800'],
-    []
-  )
+  const palette = ['#000000', '#FF0000', '#00AAFF', '#00C853', '#FFEB3B', '#9C27B0', '#FF9800']
 
-  const [cells, setCells] = useState(Array(100).fill(''))
+  const [cells, setCells] = useState(['','','','','','','','','','',
+                                      '','','','','','','','','','',
+                                      '','','','','','','','','','',
+                                      '','','','','','','','','','',
+                                      '','','','','','','','','','',
+                                      '','','','','','','','','','',
+                                      '','','','','','','','','','',
+                                      '','','','','','','','','','',
+                                      '','','','','','','','','','',
+                                      '','','','','','','','','',''])
   const [currentColor, setCurrentColor] = useState(palette[0])
 
   const [name, setName] = useState('')
@@ -26,58 +32,75 @@ export default function PixelArt() {
       if (saved) setCells(JSON.parse(saved))
     } catch {}
   }, [])
+
   useEffect(() => {
     try {
       localStorage.setItem('pixelart-10x10', JSON.stringify(cells))
     } catch {}
   }, [cells])
 
-  const handleCellClick = (idx) => {
-    setCells((prev) => {
-      const next = [...prev]
-      next[idx] = next[idx] === currentColor ? '' : currentColor
+  function handleCellClick(idx) {
+    setCells(prev => {
+      const next = prev.slice()
+      if (next[idx] === currentColor) {
+        next[idx] = ''
+      } else {
+        next[idx] = currentColor
+      }
       return next
     })
   }
 
-  const resetGrid = () => setCells(Array(100).fill(''))
+  function resetGrid() {
+    setCells(['','','','','','','','','','',
+              '','','','','','','','','','',
+              '','','','','','','','','','',
+              '','','','','','','','','','',
+              '','','','','','','','','','',
+              '','','','','','','','','','',
+              '','','','','','','','','','',
+              '','','','','','','','','','',
+              '','','','','','','','','','',
+              '','','','','','','','','',''])
+  }
 
-  const serializeGrid = () => cells.map(c => (c && c.trim() ? c : null))
+  function serializeGrid() {
+    return cells
+  }
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault()
     setMessage(null)
     setError(null)
 
-    if (!name.trim()) {
+    if (!name) {
       setError('El nombre es obligatorio.')
       return
     }
 
     const payload = {
-      name: name.trim(),
+      name: name,
       pixelData: serializeGrid(),
-      description: description.trim() ? description.trim() : "undefined",
+      description: description
     }
 
     try {
       setSubmitting(true)
-      const { data } = await axios.post(`${API_URL}/products`, payload, {
-        headers: { 'Content-Type': 'application/json' },
+      await axios.post(`${API_URL}/products`, payload, {
+        headers: { 'Content-Type': 'application/json' }
       })
       setMessage('¡Producto creado con éxito!')
       setName('')
       setDescription('')
     } catch (err) {
-      console.error(err)
       setError('No se pudo publicar el NFT. Revisá la consola y el endpoint.')
     } finally {
       setSubmitting(false)
     }
   }
 
-  const xLabels = Array.from({ length: 10 }, (_, i) => i + 1)
-  const yLabels = Array.from({ length: 10 }, (_, i) => i + 1)
+  const x = [1,2,3,4,5,6,7,8,9,10]
+  const y = [1,2,3,4,5,6,7,8,9,10]
 
   return (
     <main className="mx-auto max-w-5xl p-6 space-y-8">
@@ -100,7 +123,6 @@ export default function PixelArt() {
               onClick={() => setCurrentColor('')}
               className={`h-7 w-16 rounded-md border px-2 text-sm ${currentColor === '' ? 'border-black' : 'border-gray-300'}`}
               aria-label="Borrador"
-              title="Borrador"
             >
               Borrar
             </button>
@@ -116,24 +138,13 @@ export default function PixelArt() {
       </header>
 
       <section className="overflow-x-auto rounded-xl border">
-        <div
-          className="grid"
-          style={{ gridTemplateColumns: 'repeat(11, minmax(0, 2.5rem))' }}
-        >
+        <div className="grid" style={{ gridTemplateColumns: 'repeat(11, minmax(0, 2.5rem))' }}>
           <div className="bg-gray-100/70 p-2 text-center font-medium"></div>
-          {xLabels.map((x) => (
-            <div key={`x-${x}`} className="bg-gray-100/70 p-2 text-center text-sm font-medium">
-              {x}
-            </div>
+          {x.map((n) => (
+            <div key={`x-${n}`} className="bg-gray-100/70 p-2 text-center text-sm font-medium">{n}</div>
           ))}
-          {yLabels.map((y, rowIndex) => (
-            <Row
-              key={`row-${y}`}
-              y={y}
-              rowIndex={rowIndex}
-              cells={cells}
-              onCellClick={handleCellClick}
-            />
+          {y.map((n, rowIndex) => (
+            <Row key={`row-${n}`} y={n} rowIndex={rowIndex} cells={cells} onCellClick={handleCellClick} />
           ))}
         </div>
       </section>
@@ -157,7 +168,7 @@ export default function PixelArt() {
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder='Si la dejás vacía, se guardará como "undefined"'
+              placeholder="Descripción breve"
               className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2 focus:ring-black"
             />
           </div>
@@ -175,17 +186,6 @@ export default function PixelArt() {
 
         {message && <p className="mt-3 text-sm text-green-700">{message}</p>}
         {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
-
-        <details className="mt-4">
-          <summary className="cursor-pointer text-sm underline">Ver JSON que se envía</summary>
-          <pre className="mt-2 overflow-auto rounded-md bg-gray-50 p-3 text-xs">
-{JSON.stringify({
-  name: name || '(obligatorio)',
-  pixelData: serializeGrid().slice(0, 20).concat(['…']),
-  description: description || 'undefined',
-}, null, 2)}
-          </pre>
-        </details>
       </section>
     </main>
   )
@@ -196,7 +196,7 @@ function Row({ y, rowIndex, cells, onCellClick }) {
   return (
     <>
       <div className="bg-gray-100/70 p-2 text-center text-sm font-medium">{y}</div>
-      {Array.from({ length: 10 }).map((_, colIndex) => {
+      {[0,1,2,3,4,5,6,7,8,9].map((colIndex) => {
         const idx = base + colIndex
         return (
           <button
