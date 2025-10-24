@@ -15,7 +15,7 @@ export default function HomeContainer() {
       try {
         setLoading(true)
         setError(null)
-        const { data } = await axios.get(`${NEXT_PUBLIC_API_URL}/products`)
+        const { data } = await axios.get('http://localhost:4000/products')
         const items = Array.isArray(data?.products) ? data.products : []
         const normalized = items.map(p => ({
           ...p,

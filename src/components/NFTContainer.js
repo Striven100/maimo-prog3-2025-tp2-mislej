@@ -40,7 +40,7 @@ export default function NFTContainer({ _id }) {
       try {
         setLoading(true)
         setError(null)
-        const { data } = await axios.get(`${NEXT_PUBLIC_API_URL}/products/${_id}`)
+        const { data } = await axios.get(`http://localhost:4000/products/${_id}`)
         if (mounted) setProduct(data.product)
       } catch {
         if (mounted) setError('Hubo un error al cargar el NFT.')
