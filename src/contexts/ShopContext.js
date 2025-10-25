@@ -1,11 +1,11 @@
 'use client'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
+import axios from 'axios'
 
 const ShopContext = createContext(null)
 
 export function ShopProvider({ children }) {
   const [Carrito, setCarrito] = useState([])
-    const [cart, setCart] = useState([]);
 
   useEffect(() => {
     try {
@@ -19,12 +19,12 @@ export function ShopProvider({ children }) {
     } catch {}
   }, [Carrito])
 
-  const normalizarPath = (path) => {
+  const normalizarPath = useCallback((path) => {
     if (!path) return ''
     return path.startsWith('/assets/') ? path.replace('/assets/', '') : path
-  }
+  }, [])
 
-  const agregarAlCarrito = (name, backdrop_path, _id) => {
+  const agregarAlCarrito = useCallback((name, backdrop_path, _id) => {
     const bp = normalizarPath(backdrop_path)
     setCarrito(prev => {
       const i = prev.findIndex(p => p._id === _id)
@@ -35,9 +35,9 @@ export function ShopProvider({ children }) {
       next[i] = { ...next[i], cantidad: next[i].cantidad + 1 }
       return next
     })
-  }
+  }, [normalizarPath])
 
-  const restarDelCarrito = (_id) => {
+  const restarDelCarrito = useCallback((_id) => {
     setCarrito(prev => {
       const i = prev.findIndex(p => p._id === _id)
       if (i === -1) return prev
@@ -49,71 +49,58 @@ export function ShopProvider({ children }) {
       next[i] = { ...item, cantidad: item.cantidad - 1 }
       return next
     })
-  }
+  }, [])
 
-  const eliminarDelCarrito = (_id) =>
-    setCarrito(prev => prev.filter(p => p._id !== _id))
+  const eliminarDelCarrito = useCallback((_id) =>
+    setCarrito(prev => prev.filter(p => p._id !== _id)), [])
 
-  const limpiarCarrito = () => setCarrito([])
+  const limpiarCarrito = useCallback(() => setCarrito([]), [])
 
-    const handleAddToCart = (product) => {
-    let productToAdd = {};
-    const findProduct = cart.find(
-      (productInCart) => productInCart._id === product._id
-    );
-    if (findProduct) {
-      productToAdd = { ...findProduct, qty: findProduct.qty + product.qty };
-    } else {
-      productToAdd = product;
-    }
+  const handleAddToCart = useCallback((product) => {
+    setCarrito(prev => {
+      const i = prev.findIndex(p => p._id === product._id)
+      if (i === -1) {
+        return [...prev, { ...product, cantidad: product.qty || 1 }]
+      }
+      const next = [...prev]
+      next[i] = { ...next[i], cantidad: next[i].cantidad + (product.qty || 1) }
+      return next
+    })
+  }, [])
 
-    const filteredCart = cart.filter(
-      (productInCart) => productInCart._id !== product._id
-    );
-    setCart([...filteredCart, productToAdd]);
-  };
+  const CarritoQty = useCallback(() =>
+    Carrito.reduce((acc, it) => acc + (it.cantidad ?? 1), 0), [Carrito])
 
-  const CarritoQty = () =>
-    Carrito.reduce((acc, it) => acc + (it.cantidad ?? 1), 0)
+  const cartTotal = useMemo(() => Carrito.reduce(
+    (acc, product) => acc + (product.cantidad || 1) * (product.price || 0), 0), [Carrito])
 
-    const cartTotal = cart.reduce(
-    (acc, product) => acc + product.qty * product.price,0);
-
-  const addOrder = async (userValues) => {
-    const reducedCart = cart.map((product) => {
-      const prod = {
-        name: product.name,
-        _id: product._id,
-        qty: product.qty,
-      };
-
-      return prod;
-    });
+  const addOrder = useCallback(async (userValues) => {
+    const reducedItems = Carrito.map((product) => ({
+      productId: product._id,
+      name: product.name,
+      price: String(product.price || 0),  // Asegurar que sea string
+      quantity: product.cantidad || 1,
+    }))
 
     const orderValues = {
-      user: userValues,
-      products: reducedCart,
-      total: cartTotal
-    };
-    console.log('my order is', orderValues);
+      name: userValues.username || '',  // Extraer de userValues
+      email: userValues.email || '',
+      items: reducedItems,
+      total: String(cartTotal)  // Convertir a string
+    }
+    console.log('my order is', orderValues)
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/orders`,
-        orderValues
-      );
-    
-
+        `http://localhost:4000/routes`,  // Hardcodeado para probar
+       orderValues
+      )
       return true
-
-
-
     } catch (error) {
-      console.log('error', error);
-
+      console.log('error', error)
       return false
     }
-  };
+  }, [Carrito, cartTotal])
 
   const value = useMemo(() => ({
     Carrito,
@@ -124,7 +111,7 @@ export function ShopProvider({ children }) {
     handleAddToCart,
     CarritoQty,
     addOrder
-  }), [Carrito])
+  }), [Carrito, agregarAlCarrito, restarDelCarrito, eliminarDelCarrito, limpiarCarrito, handleAddToCart, CarritoQty, addOrder])
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>
 }

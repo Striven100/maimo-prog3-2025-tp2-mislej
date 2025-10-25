@@ -24,6 +24,8 @@ export default function CarritoContainer() {
     }
   })
 
+  const { addOrder } = useShopContext()
+
   async function onSubmit(e) {
     e.preventDefault()
     setMsg(null)
@@ -39,19 +41,18 @@ export default function CarritoContainer() {
     }
 
     try {
-      setSending(true)
-      const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-      const { data } = await axios.post(`${API}/routes`, { name, email, items })
-      if (data && data.ok) {
-        setMsg('¡Pedido enviado con éxito!')
-      } else {
-        setError('Error al enviar el pedido')
-      }
-    } catch (err) {
-      setError('No se pudo conectar con la API')
-    } finally {
-      setSending(false)
+    setSending(true)
+    const success = await addOrder({ username: name, email })
+    if (success) {
+      setMsg('¡Pedido enviado con éxito!')
+    } else {
+      setError('Error al enviar el pedido')
     }
+  } catch (err) {
+    setError('No se pudo conectar con la API')
+  } finally {
+    setSending(false)
+  }
   }
 
   return (
