@@ -78,21 +78,21 @@ export function ShopProvider({ children }) {
     const reducedItems = Carrito.map((product) => ({
       productId: product._id,
       name: product.name,
-      price: String(product.price || 0),  // Asegurar que sea string
+      price: String(product.price || 0),
       quantity: product.cantidad || 1,
     }))
 
     const orderValues = {
-      name: userValues.username || '',  // Extraer de userValues
+      name: userValues.username || '',
       email: userValues.email || '',
       items: reducedItems,
-      total: String(cartTotal)  // Convertir a string
+      total: String(cartTotal)
     }
     console.log('my order is', orderValues)
 
     try {
       const response = await axios.post(
-        `http://localhost:4000/routes`,  // Hardcodeado para probar
+        `http://localhost:4000/routes`,
        orderValues
       )
       return true

@@ -76,9 +76,9 @@ export default function NFTsGrid({ NFTs }) {
 
               <p className="mt-1 text-xs text-black/60">{n.release_date}</p>
 
-              <h3 className="font-bold text-black/90 truncate">
-                {typeof n.price === 'string' ? n.price : ('$' + n.price)}
-              </h3>
+<h3 className="font-bold text-black/90 truncate">
+  {!n.price ? '-' : (typeof n.price === 'string' ? n.price : ('$' + n.price))}
+</h3>
 
               <div className="mt-4 flex items-center justify-between">
                 <Link
